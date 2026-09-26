@@ -1,11 +1,15 @@
+// ============================================================================
+// PÁGINA: PANEL PRINCIPAL (DASHBOARD)
+// ============================================================================
+// Vista "Inicio". Las tarjetas de estadísticas (Total inscritos, Doctorado
+// y Maestría) se cargan desde GET /api/estadisticas.
+// La tabla de "Alumnos recientes" aún usa datos de ejemplo (mock).
+// ============================================================================
+
+import { useEffect, useState } from 'react'
 import AppLayout from '../components/AppLayout.jsx'
 
-const STATS = [
-  { label: 'Total inscritos', value: 67 },
-  { label: 'Doctorado', value: 24 },
-  { label: 'Maestria', value: 43 },
-]
-
+// --- Datos de ejemplo de la tabla de alumnos recientes (mock) --------------
 const ALUMNOS = [
   {
     matricula: '262H23001',
@@ -38,8 +42,38 @@ const ALUMNOS = [
 ]
 
 export default function Dashboard() {
+  // --- Estado de las estadísticas (total / doctorado / maestría) -----------
+  const [stats, setStats] = useState({
+    total: 0,
+    doctorado: 0,
+    maestria: 0,
+  })
+
+  // --- Carga las estadísticas desde el backend al montar la página ---------
+  useEffect(() => {
+    fetch('http://localhost:3000/api/estadisticas')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Error al obtener las estadísticas')
+        }
+
+        return response.json()
+      })
+      .then((data) => {
+        setStats({
+          total: data.total,
+          doctorado: data.doctorado,
+          maestria: data.maestria,
+        })
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }, [])
+
   return (
     <AppLayout>
+      {/* Barra de acciones: búsqueda (sin funcionalidad) y alta de alumno */}
       <div className="flex items-center gap-4 mb-7">
         <div className="flex-1 max-w-[360px]">
           <input
@@ -58,7 +92,11 @@ export default function Dashboard() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-7">
-        {STATS.map((stat) => (
+        {[
+          { label: 'Total inscritos', value: stats.total },
+          { label: 'Doctorado', value: stats.doctorado },
+          { label: 'Maestria', value: stats.maestria },
+        ].map((stat) => (
           <div key={stat.label} className="neumorphic-elevated rounded-xl px-[22px] py-5">
             <p className="text-[13px] text-on-surface-variant mb-[6px]">{stat.label}</p>
             <p className="text-[28px] font-semibold text-on-background">{stat.value}</p>

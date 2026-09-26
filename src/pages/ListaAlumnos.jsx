@@ -1,7 +1,17 @@
+// ============================================================================
+// PÁGINA: LISTA DE ALUMNOS POR PROGRAMA
+// ============================================================================
+// Muestra los alumnos de un programa (clave de la URL) como tarjetas
+// expandibles. Cada tarjeta carga el expediente del alumno (GET
+// /api/alumnos/:id/expediente) y permite cambiar el estado de cada
+// documento (PATCH /api/alumnos/:id/documentos/:clave).
+// ============================================================================
+
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import AppLayout from '../components/AppLayout.jsx'
 
+// --- Mapa de claves de programa a su nombre completo ------------------------
 const NOMBRE_PROGRAMA = {
   DCC: 'Doctorado en Ciencias de la Computación',
   DGTI: 'Doctorado en Gestión de Tecnologías de Información',
@@ -12,12 +22,22 @@ const NOMBRE_PROGRAMA = {
 
 
 
+// ============================================================================
+// TARJETA DE ESTUDIANTE (expediente expandible)
+// ============================================================================
 function TarjetaEstudiante({ estudiante }) {
   const [expanded, setExpanded] = useState(false)
   const [expediente, setExpediente] = useState(null)
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState('')
   const [completo, setCompleto] = useState(false)
+
+  // Documentos requeridos para considerar el expediente "Completo".
+  const DOCUMENTOS_REQUERIDOS = [
+    'F1', 'F2', 'F3', 'F4', 'F5', 'EV1', 'EV2', 'EV7',
+  ]
+
+  // --- Carga el expediente del alumno desde el backend (una sola vez) ------
     const cargarExpediente = () => {
     if (expediente || cargando) {
       return
@@ -37,18 +57,8 @@ function TarjetaEstudiante({ estudiante }) {
       .then((data) => {
     setExpediente(data)
 
-    const documentosRequeridos = [
-      'F1',
-      'F2',
-      'F3',
-      'F4',
-      'F5',
-      'EV1',
-      'EV2',
-      'EV7',
-    ]
-
-  const estaCompleto = documentosRequeridos.every((clave) => {
+  // Determina si todos los documentos requeridos están "Entregado".
+  const estaCompleto = DOCUMENTOS_REQUERIDOS.every((clave) => {
     const documento = data.documentos.find(
       (doc) => doc.clave === clave
     )
@@ -65,6 +75,7 @@ function TarjetaEstudiante({ estudiante }) {
         setCargando(false)
       })
   }
+  // --- Alterna Entregado/Pendiente de un documento (PATCH al backend) ------
   const cambiarEstadoDocumento = async (documento) => {
   const nuevoEstado =
     documento.estado === 'Entregado' ? 'Pendiente' : 'Entregado'
@@ -98,18 +109,8 @@ function TarjetaEstudiante({ estudiante }) {
       documentos: documentosActualizados,
     })
 
-    const documentosRequeridos = [
-      'F1',
-      'F2',
-      'F3',
-      'F4',
-      'F5',
-      'EV1',
-      'EV2',
-      'EV7',
-    ]
-
-    const estaCompleto = documentosRequeridos.every((clave) => {
+    // Recalcula si el expediente quedó completo tras el cambio.
+    const estaCompleto = DOCUMENTOS_REQUERIDOS.every((clave) => {
       const doc = documentosActualizados.find(
         (documento) => documento.clave === clave
       )
@@ -122,6 +123,7 @@ function TarjetaEstudiante({ estudiante }) {
     console.error(error)
   }
 }
+  // --- Alterna la expansión de la tarjeta; al expandir, carga expediente ----
   const alternarTarjeta = () => {
     const nuevoEstado = !expanded
 
@@ -131,9 +133,10 @@ function TarjetaEstudiante({ estudiante }) {
       cargarExpediente()
     }
   }
+  // --- Render: fila visible (resumen) + área expandible (expediente) --------
   return (
     <div className="neumorphic-elevated rounded-xl bg-[#e0e5ec] overflow-hidden transition-all duration-300 border border-outline-variant/5">
-      {/* Visible Row Info */}
+      {/* Fila visible: matrícula, nombre, semestre, estado general */}
       <div
         className="p-card-padding flex flex-col md:flex-row justify-between items-center gap-4 cursor-pointer hover:bg-surface-container-low transition-colors"
         onClick={alternarTarjeta}
@@ -184,7 +187,7 @@ function TarjetaEstudiante({ estudiante }) {
           </span>
         </button>
       </div>
-      {/* Expandable Area */}
+      {/* Área expandible: muestra el expediente al hacer clic */}
       <div
         className={`expandable-content bg-surface-container-low/30 border-t border-outline-variant/10 ${
           expanded ? 'expanded' : ''
@@ -295,6 +298,9 @@ function TarjetaEstudiante({ estudiante }) {
   )
 }
 
+// ============================================================================
+// PÁGINA PRINCIPAL: LISTA DE ALUMNOS DE UN PROGRAMA
+// ============================================================================
 export default function ListaAlumnos() {
   const { clave } = useParams()
   const claveNormalizada = (clave ?? '').toUpperCase()
@@ -302,6 +308,7 @@ export default function ListaAlumnos() {
     const [estudiantes, setEstudiantes] = useState([])
   const [error, setError] = useState('')
 
+  // --- Carga los alumnos del programa desde el backend ----------------------
   useEffect(() => {
     fetch(`http://localhost:3000/api/programas/${claveNormalizada}/alumnos`)
       .then((response) => {
@@ -312,6 +319,7 @@ export default function ListaAlumnos() {
         return response.json()
       })
       .then((data) => {
+        // Adapta la respuesta del backend a los campos que usa la tarjeta.
         const estudiantesAdaptados = data.map((alumno) => ({
           id: alumno.id,
           matricula: alumno.matricula,
@@ -327,9 +335,11 @@ export default function ListaAlumnos() {
         setError('No se pudieron cargar los alumnos')
       })
   }, [claveNormalizada])
+
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto flex flex-col gap-element-gap">
+        {/* Encabezado con la clave y nombre del programa */}
         <header className="mb-8">
           <h1 className="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">
             {claveNormalizada} - {nombrePrograma}

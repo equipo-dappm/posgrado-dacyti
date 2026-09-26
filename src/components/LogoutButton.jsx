@@ -1,3 +1,9 @@
+// ============================================================================
+// COMPONENTE: BOTÓN DE CIERRE DE SESIÓN
+// ============================================================================
+// Navega a /login. Aún no invalida ninguna sesión real en el backend.
+// ============================================================================
+
 import { useNavigate } from 'react-router-dom'
 
 export default function LogoutButton() {

@@ -1,3 +1,15 @@
+// ============================================================================
+// RUTAS DE LA APLICACIÓN
+// ============================================================================
+// Define el routing de React Router. "/" redirige a la página de login.
+//
+//   /                  -> redirige a /login
+//   /login             -> LoginPage (autenticación)
+//   /inicio            -> Dashboard (panel principal)
+//   /programas         -> SelectorPrograma (elegir programa)
+//   /programas/:clave  -> ListaAlumnos (alumnos de un programa)
+// ============================================================================
+
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Dashboard from './pages/Dashboard.jsx'
 import ListaAlumnos from './pages/ListaAlumnos.jsx'

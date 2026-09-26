@@ -1,10 +1,19 @@
+// ============================================================================
+// COMPONENTE: INTERRUPTOR DE TEMA CLARO/OSCURO
+// ============================================================================
+// Alterna la clase "dark" en el elemento <html>, que activa el modo
+// nocturno definido en src/styles/night-mode.css.
+// ============================================================================
+
 import { useState } from 'react'
 
 export default function ThemeToggle() {
+  // Estado inicial: lee si el tema oscuro ya está activo en <html>.
   const [dark, setDark] = useState(() =>
     typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
   )
 
+  // Alterna la clase "dark" y actualiza el estado local.
   const handleToggle = () => {
     const next = !dark
     document.documentElement.classList.toggle('dark', next)

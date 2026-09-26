@@ -1,5 +1,15 @@
-vaBEGIN TRANSACTION;
+-- ============================================================================
+-- SEED: ESTADOS DE DOCUMENTOS POR ALUMNO
+-- ============================================================================
+-- Carga (o actualiza) el estado de los 8 documentos de cada alumno.
+-- Aplicar con sqlite3 después de crear alumnos y tipos de documento:
+--     sqlite3 posgrados < insertar-documentos.sql
+-- Valores: 2 = Entregado, 1 = Pendiente.
+-- ============================================================================
 
+BEGIN TRANSACTION;
+
+-- --- Datos por matrícula: f1..f5 (formatos) y ev1,ev2,ev7 (estancias) ------
 WITH datos(matricula, f1, f2, f3, f4, f5, ev1, ev2, ev7) AS (
 VALUES
     ('262H23001', 2, 2, 2, 2, 2, 2, 2, 2),
@@ -82,9 +92,12 @@ VALUES
     ('252H19003', 2, 2, 2, 2, 2, 2, 2, 2),
     ('252H19005', 2, 2, 2, 2, 2, 2, 2, 2)
 ),
+-- Claves de documento requeridas.
 documentos(clave) AS (
     VALUES ('F1'),('F2'),('F3'),('F4'),('F5'),('EV1'),('EV2'),('EV7')
 )
+-- --- Inserción: cruza cada matrícula con cada documento --------------------
+-- En conflicto (alumno+documento ya existe) actualiza el estado.
 INSERT INTO alumno_documento
     (alumno_id, tipo_documento_id, estado_id)
 SELECT

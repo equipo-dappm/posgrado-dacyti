@@ -1,5 +1,12 @@
+-- ============================================================================
+-- ESQUEMA DE BASE DE DATOS — Sistema de Posgrado DACYTI
+-- ============================================================================
+-- Aplicar para crear la estructura:  sqlite3 posgrados < server/schema.sql
+-- ============================================================================
+
 PRAGMA foreign_keys = ON;
 
+-- === CATÁLOGOS (programas y semestres) =======================================
 CREATE TABLE IF NOT EXISTS programas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     clave TEXT NOT NULL UNIQUE,
@@ -11,6 +18,8 @@ CREATE TABLE IF NOT EXISTS semestres (
     numero INTEGER NOT NULL UNIQUE
 );
 
+-- === ALUMNOS ================================================================
+-- Cada alumno pertenece a un programa y cursa un semestre.
 CREATE TABLE IF NOT EXISTS alumnos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     matricula TEXT NOT NULL UNIQUE,
@@ -23,6 +32,7 @@ CREATE TABLE IF NOT EXISTS alumnos (
     FOREIGN KEY (semestre_id) REFERENCES semestres(id)
 );
 
+-- === PROYECTOS (tesis / anteproyectos) ======================================
 CREATE TABLE IF NOT EXISTS tipos_proyecto (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL UNIQUE
@@ -37,6 +47,7 @@ CREATE TABLE IF NOT EXISTS proyectos (
     FOREIGN KEY (tipo_id) REFERENCES tipos_proyecto(id)
 );
 
+-- === DOCUMENTOS (formatos y evaluaciones del expediente) ====================
 CREATE TABLE IF NOT EXISTS tipos_documento (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     clave TEXT NOT NULL UNIQUE,
@@ -49,6 +60,7 @@ CREATE TABLE IF NOT EXISTS estados_documento (
     nombre TEXT NOT NULL UNIQUE
 );
 
+-- Relación alumno-documento: un estado por documento y alumno.
 CREATE TABLE IF NOT EXISTS alumno_documento (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     alumno_id INTEGER NOT NULL,

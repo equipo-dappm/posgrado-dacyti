@@ -1,3 +1,11 @@
+// ============================================================================
+// SCRIPT DE UTILIDAD — CREAR ADMINISTRADOR
+// ============================================================================
+// Script interactivo de consola: pide usuario y contraseña y los inserta
+// en la tabla "administrador" con la contraseña cifrada (scrypt).
+// Uso: node server/create-admin.js
+// ============================================================================
+
 import crypto from 'node:crypto'
 import readline from 'node:readline'
 import db from './database.js'
@@ -7,12 +15,14 @@ const rl = readline.createInterface({
   output: process.stdout,
 })
 
+// Pide un texto al usuario y espera la respuesta (promesa).
 function pregunta(texto) {
   return new Promise((resolve) => {
     rl.question(texto, resolve)
   })
 }
 
+// Genera el hash de la contraseña: "salt:hash" (scrypt de 64 bytes hex).
 function generarHash(password) {
   const salt = crypto.randomBytes(16).toString('hex')
   const hash = crypto.scryptSync(password, salt, 64).toString('hex')
@@ -20,6 +30,7 @@ function generarHash(password) {
   return `${salt}:${hash}`
 }
 
+// --- Flujo principal de creación de administrador ---------------------------
 async function crearAdministrador() {
   console.log('\n=== CREAR ADMINISTRADOR ===\n')
 
@@ -33,6 +44,7 @@ async function crearAdministrador() {
     return
   }
 
+  // Evita duplicados: el usuario ya existe.
   const existente = db
     .prepare('SELECT id FROM administrador WHERE usuario = ?')
     .get(usuario)

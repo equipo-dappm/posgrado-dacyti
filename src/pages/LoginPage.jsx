@@ -1,8 +1,16 @@
+// ============================================================================
+// PÁGINA DE LOGIN
+// ============================================================================
+// Formulario de autenticación. Al enviarlo, consume POST /api/login del
+// backend y, si las credenciales son correctas, redirige a /inicio.
+// ============================================================================
+
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ThemeToggle from '../components/ThemeToggle.jsx'
 
 export default function LoginPage() {
+  // --- Estado local del formulario -----------------------------------------
   const [showPassword, setShowPassword] = useState(false)
   const [usuario, setUsuario] = useState('')
   const [password, setPassword] = useState('')
@@ -11,6 +19,7 @@ export default function LoginPage() {
 
   const navigate = useNavigate()
 
+  // --- Envío del formulario: llama a la API de login -----------------------
   const handleSubmit = async (event) => {
     event.preventDefault()
 
@@ -31,11 +40,13 @@ export default function LoginPage() {
 
       const data = await response.json()
 
+      // Credenciales inválidas: mostramos el mensaje del servidor.
       if (!response.ok) {
         setError(data.mensaje || 'Usuario o contraseña incorrectos')
         return
       }
 
+      // Login correcto: navega al panel principal.
       navigate('/inicio')
     } catch (error) {
       console.error(error)
@@ -45,9 +56,10 @@ export default function LoginPage() {
     }
   }
 
+  // --- Pantalla de login (interfaz) ----------------------------------------
   return (
     <div className="bg-[#e0e5ec] dark:bg-background min-h-screen flex items-center justify-center font-body-md text-on-background transition-colors duration-300">
-      {/* Theme Toggle */}
+      {/* Theme Toggle (modo claro/oscuro) */}
       <div className="absolute top-container-margin right-container-margin z-50">
         <ThemeToggle />
       </div>

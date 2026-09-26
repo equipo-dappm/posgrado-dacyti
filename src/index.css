@@ -141,6 +141,9 @@
   box-shadow: 9px 9px 16px rgba(163, 177, 198, 0.6), -9px -9px 16px rgba(255, 255, 255, 0.5), inset 2px 2px 4px rgba(255, 255, 255, 0.4);
 }
 
+/* ============================================================
+   Badges / pills de estado (formato, evaluaciones, programa)
+   ============================================================ */
 .pill-green {
   background: linear-gradient(135deg, #e6f4ea, #ceebd5);
   color: #137333;
@@ -172,6 +175,9 @@
   box-shadow: 2px 2px 5px rgba(163, 177, 198, 0.4), -2px -2px 5px rgba(255, 255, 255, 0.7);
 }
 
+/* ============================================================
+   Área expandible (tarjeta de expediente del alumno)
+   ============================================================ */
 .expandable-content {
   display: grid;
   grid-template-rows: 0fr;

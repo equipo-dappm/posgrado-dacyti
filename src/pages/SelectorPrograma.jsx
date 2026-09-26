@@ -1,9 +1,17 @@
+// ============================================================================
+// PÁGINA: SELECCIÓN DE PROGRAMA
+// ============================================================================
+// Muestra los programas de posgrado en tarjetas. Al hacer clic en una
+// tarjeta navega a "ListaAlumnos" del programa. Los datos se cargan desde
+// GET /api/programas.
+// ============================================================================
+
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AppLayout from '../components/AppLayout.jsx'
 
-
-
+// --- Tarjeta individual de un programa -------------------------------------
+// El clic navega a /programas/:clave.
 function ProgramaCard({ programa }) {
   const navigate = useNavigate()
 
@@ -35,6 +43,7 @@ export default function SelectorPrograma() {
   const [programas, setProgramas] = useState([])
   const [error, setError] = useState('')
 
+  // --- Carga de programas desde el backend al montar la página -------------
   useEffect(() => {
     fetch('http://localhost:3000/api/programas')
       .then((response) => {
@@ -59,11 +68,13 @@ export default function SelectorPrograma() {
       })
   }, [])
 
+  // Se separan las tarjetas: la mayoría en grid, las "centradas" en una fila.
   const gridCards = programas.filter((programa) => !programa.centered)
   const centeredCards = programas.filter((programa) => programa.centered)
   return (
     <AppLayout>
       <div className="max-w-[1440px] mx-auto min-h-full flex flex-col gap-12">
+        {/* Encabezado de la página */}
         <header className="text-center mb-8">
           <h1 className="text-display-lg font-display-lg font-bold text-on-background mb-4">
             DACYTI
@@ -83,20 +94,6 @@ export default function SelectorPrograma() {
           {centeredCards.map((programa) => (
             <ProgramaCard key={programa.clave} programa={programa} />
           ))}
-        </div>
-        {/* Full width action bar */}
-        <div className="mt-8">
-          <button
-            className="w-full neumorphic-elevated neumorphic-elevated-hover rounded-xl py-6 px-8 flex items-center justify-center gap-4 group"
-            type="button"
-          >
-            <span className="material-symbols-outlined text-primary group-hover:text-primary-container transition-colors">
-              group
-            </span>
-            <span className="text-headline-md font-headline-md text-on-background font-semibold">
-              Ver todos los alumnos inscritos
-            </span>
-          </button>
         </div>
         {/* Footer */}
         <footer className="w-full py-8 mt-auto flex flex-col md:flex-row justify-between items-center border-t border-outline-variant/10">

@@ -1,3 +1,10 @@
+// ============================================================================
+// BACKEND — API REST del Sistema de Posgrado DACYTI
+// ============================================================================
+// Express + SQLite (better-sqlite3). Expuesto en http://localhost:3000.
+// El frontend (Vite, puerto 5173) consume estas rutas con /api/... .
+// ============================================================================
+
 import express from 'express'
 import cors from 'cors'
 import crypto from 'node:crypto'
@@ -6,8 +13,12 @@ import db from './database.js'
 const app = express()
 const PORT = 3000
 
+// Middlewares globales: habilitan CORS y parsean cuerpos JSON.
 app.use(cors())
 app.use(express.json())
+
+// === ENDPOINT DE PRUEBA ======================================================
+// Devuelve un mensaje de conexión y la lista de tablas de la BD.
 
 app.get('/api/test', (req, res) => {
   const tablas = db
@@ -19,7 +30,9 @@ app.get('/api/test', (req, res) => {
     tablas,
   })
 })
-app.get("/api/programas", (req, res) => {
+// === CATÁLOGO DE PROGRAMAS ===================================================
+// Lista los programas con su total de alumnos inscritos (LEFT JOIN).
+app.get('/api/programas', (req, res) => {
   try {
     const programas = db.prepare(`
       SELECT
@@ -42,7 +55,9 @@ app.get("/api/programas", (req, res) => {
     });
   }
 });
-//esto devuelve los datos de los alumnos listados todos por cada programa
+// === ALUMNOS POR PROGRAMA ====================================================
+// Lista todos los alumnos de un programa según su clave (ej. DCC).
+// Calcula estado_general: 'Completo' si tiene 8 documentos 'Entregado'.
 app.get('/api/programas/:clave/alumnos', (req, res) => {
   try {
     const { clave } = req.params
@@ -86,6 +101,8 @@ app.get('/api/programas/:clave/alumnos', (req, res) => {
     })
   }
 })
+// === EXPEDIENTE DE UN ALUMNO ================================================
+// Devuelve datos del alumno, su proyecto (tesis/anteproyecto) y sus documentos.
 app.get('/api/alumnos/:id/expediente', (req, res) => {
   try {
     const { id } = req.params
@@ -149,6 +166,9 @@ app.get('/api/alumnos/:id/expediente', (req, res) => {
     })
   }
 })
+// === AUTENTICACIÓN ===========================================================
+// Valida usuario y contraseña del administrador.
+// El hash se guarda como "salt:hash" (scrypt); se comparan de forma segura.
 app.post('/api/login', (req, res) => {
   const { usuario, password } = req.body
 
@@ -192,6 +212,8 @@ app.post('/api/login', (req, res) => {
     usuario: administrador.usuario,
   })
 })
+// === ACTUALIZAR ESTADO DE UN DOCUMENTO =======================================
+// Cambia el estado de un documento (Entregado/Pendiente) de un alumno.
 app.patch('/api/alumnos/:alumnoId/documentos/:clave', (req, res) => {
   try {
     const { alumnoId, clave } = req.params
@@ -258,6 +280,40 @@ app.patch('/api/alumnos/:alumnoId/documentos/:clave', (req, res) => {
   }
 })
 
+// === ESTADÍSTICAS DEL DASHBOARD =============================================
+// Devuelve: total de alumnos inscritos, y los desglosados por nivel
+// (doctorado / maestría), clasificando por el prefijo de la clave del
+// programa (D.. = Doctorado, M.. = Maestría).
+app.get('/api/estadisticas', (req, res) => {
+  try {
+    const total = db.prepare('SELECT COUNT(*) AS n FROM alumnos').get().n
+
+    const doctorado = db
+      .prepare(`
+        SELECT COUNT(*) AS n
+        FROM alumnos a
+        INNER JOIN programas p ON a.programa_id = p.id
+        WHERE p.clave LIKE 'D%'
+      `)
+      .get().n
+
+    const maestria = db
+      .prepare(`
+        SELECT COUNT(*) AS n
+        FROM alumnos a
+        INNER JOIN programas p ON a.programa_id = p.id
+        WHERE p.clave LIKE 'M%'
+      `)
+      .get().n
+
+    res.json({ total, doctorado, maestria })
+  } catch (error) {
+    console.error('Error al obtener estadísticas:', error)
+    res.status(500).json({ error: 'Error al obtener las estadísticas' })
+  }
+})
+
+// Arranque del servidor.
 app.listen(PORT, () => {
   console.log(`Servidor backend ejecutándose en http://localhost:${PORT}`)
 })

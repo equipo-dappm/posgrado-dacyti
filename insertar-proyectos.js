@@ -1,5 +1,14 @@
+// ============================================================================
+// SEED: INSERTAR PROYECTOS (ANTEPROYECTOS) POR ALUMNO
+// ============================================================================
+// Script de carga de datos. Asocia a cada matrícula el nombre de su
+// anteproyecto/tesis en la tabla "proyectos".
+// Uso: node insertar-proyectos.js   (requiere la BD ya creada con alumnos)
+// ============================================================================
+
 import db from './server/database.js';
 
+// --- Datos: [matrícula, nombre del proyecto] -------------------------------
 const datos = [
   ["262H23001", "RESOLUCIÓN NEURO-SIMBÓLICA DE CONFLICTOS LÓGICOS EN GUÍAS DE PRÁCTICA CLÍNICA PARA PACIENTES MULTIMÓRBIDOS: HACIA UNA ARQUITECTURA DE VERIFICACIÓN FORMAL DEL CONOCIMIENTO MÉDICO"],
   ["262H23002", "MODELADO DE LA CORROSIÓN ATMOSFÉRICA MEDIANTE PHYSICS-INFORMED NEURAL NETWORKS (PINNS) EN AMBIENTES COSTEROS DE MÉXICO"],
@@ -83,6 +92,9 @@ const datos = [
   ["262H19005", "DISEÑO E IMPLEMENTACIÓN DE UNA APLICACIÓN MÓVIL INTELIGENTE PARA EL ANÁLISIS DE VENTAS Y APOYO A LA TOMA DE DECISIONES EN MICROEMPRENDIMIENTOS"]
 ];
 
+// --- Consulta de inserción -------------------------------------------------
+// Inserta el anteproyecto solo si el alumno existe y aún no tiene uno
+// del mismo tipo (evita duplicados).
 const insert = db.prepare(`
   INSERT INTO proyectos (alumno_id, nombre, tipo_id)
   SELECT a.id, ?, tp.id
@@ -97,6 +109,7 @@ const insert = db.prepare(`
     )
 `);
 
+// Ejecuta todas las inserciones dentro de una transacción única.
 const tx = db.transaction(() => {
   for (const [matricula, nombre] of datos) {
     insert.run(nombre, matricula);
@@ -105,6 +118,7 @@ const tx = db.transaction(() => {
 
 tx();
 
+// --- Reporte final ---------------------------------------------------------
 const total = db.prepare(`
   SELECT COUNT(*) AS total
   FROM proyectos
