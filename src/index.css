@@ -10,50 +10,18 @@
    ============================================================ */
 @theme {
   /* Colores */
-  --color-surface: #f6f9ff;
-  --color-surface-dim: #d5dae1;
-  --color-surface-bright: #f6f9ff;
-  --color-surface-container-lowest: #ffffff;
   --color-surface-container-low: #eff4fb;
   --color-surface-container: #e9eef5;
-  --color-surface-container-high: #e4e9f0;
-  --color-surface-container-highest: #dee3ea;
   --color-on-surface: #171c21;
   --color-on-surface-variant: #404751;
-  --color-inverse-surface: #2b3136;
-  --color-inverse-on-surface: #ecf1f8;
   --color-outline: #707882;
   --color-outline-variant: #bfc7d3;
-  --color-surface-tint: #00629f;
   --color-primary: #00629f;
   --color-on-primary: #ffffff;
   --color-primary-container: #4facfe;
-  --color-on-primary-container: #003e68;
-  --color-inverse-primary: #9bcbff;
-  --color-secondary: #436180;
-  --color-on-secondary: #ffffff;
-  --color-secondary-container: #bcdaff;
-  --color-on-secondary-container: #42607f;
-  --color-tertiary: #7e5700;
-  --color-on-tertiary: #ffffff;
-  --color-tertiary-container: #dc9a00;
-  --color-on-tertiary-container: #523700;
   --color-error: #ba1a1a;
-  --color-on-error: #ffffff;
   --color-error-container: #ffdad6;
-  --color-on-error-container: #93000a;
-  --color-primary-fixed: #d0e4ff;
   --color-primary-fixed-dim: #9bcbff;
-  --color-on-primary-fixed: #001d34;
-  --color-on-primary-fixed-variant: #004a7a;
-  --color-secondary-fixed: #d0e4ff;
-  --color-secondary-fixed-dim: #abc9ed;
-  --color-on-secondary-fixed: #001d34;
-  --color-on-secondary-fixed-variant: #2b4967;
-  --color-tertiary-fixed: #ffdeac;
-  --color-tertiary-fixed-dim: #ffba38;
-  --color-on-tertiary-fixed: #281900;
-  --color-on-tertiary-fixed-variant: #604100;
   --color-background: #f6f9ff;
   --color-on-background: #171c21;
   --color-surface-variant: #dee3ea;
@@ -66,16 +34,13 @@
 
   /* Espaciado */
   --spacing-base: 8px;
-  --spacing-gutter: 24px;
   --spacing-card-padding: 24px;
   --spacing-container-margin: 32px;
   --spacing-element-gap: 16px;
 
   /* Tipografía */
   --font-display-lg: "Inter", sans-serif;
-  --font-headline-lg: "Inter", sans-serif;
   --font-headline-md: "Inter", sans-serif;
-  --font-headline-lg-mobile: "Inter", sans-serif;
   --font-body-lg: "Inter", sans-serif;
   --font-body-md: "Inter", sans-serif;
   --font-label-md: "Inter", sans-serif;
@@ -91,9 +56,6 @@
 
   --text-headline-md: 24px;
   --text-headline-md--line-height: 32px;
-
-  --text-headline-lg-mobile: 28px;
-  --text-headline-lg-mobile--line-height: 36px;
 
   --text-body-lg: 18px;
   --text-body-lg--line-height: 28px;
@@ -188,12 +150,4 @@
 }
 .expandable-content > div {
   overflow: hidden;
-}
-
-/* Barra de navegación superior (sombra neumórfica de los code.html) */
-.top-navbar {
-  box-shadow: 9px 9px 16px rgba(163, 177, 198, 0.6), -9px -9px 16px rgba(255, 255, 255, 0.5);
-}
-.dark .top-navbar {
-  box-shadow: 9px 9px 16px #1d2122, -9px -9px 16px #3d4648;
 }

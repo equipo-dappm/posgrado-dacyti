@@ -1,16 +1,114 @@
-# React + Vite
+# Sistema de Gestión de Posgrado DACYTI
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Aplicación web para el seguimiento expedientes documentales de los programas de
+posgrado de la DACYTI: catálogo de programas, lista de alumnos por programa,
+expediente de cada alumno (proyecto/tesis + 8 documentos) y estadísticas
+generales.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Capa | Tecnología |
+| --- | --- |
+| Frontend | React 19 + React Router 7, Vite 8, Tailwind CSS 4 |
+| Backend | Express 5 (API REST en el puerto 3000) |
+| Base de datos | SQLite vía `better-sqlite3` (archivo local `posgrados`) |
+| Lint | Oxlint (`pnpm lint`) |
 
-## React Compiler
+## Requisitos
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 20+ (probado con Node 26).
+- **pnpm**. Usa pnpm para todo; no uses npm ni yarn.
 
-## Expanding the Oxlint configuration
+## Puesta en marcha
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+# 1. Dependencias (solo la primera vez)
+pnpm install
+
+# 2. Backend (terminal 1) — API en http://localhost:3000
+node server/index.js
+
+# 3. Frontend (terminal 2) — app en http://localhost:5173
+pnpm dev
+```
+
+Abre <http://localhost:5173>. Ambos procesos deben estar corriendo: el frontend
+consume la API en `http://localhost:3000`.
+
+## Scripts
+
+| Comando | Descripción |
+| --- | --- |
+| `pnpm dev` | Servidor de desarrollo de Vite con HMR |
+| `pnpm build` | Build de producción en `dist/` |
+| `pnpm preview` | Sirve el build de producción en `http://localhost:4173` |
+| `pnpm lint` | Análisis estático con Oxlint |
+| `node server/index.js` | Arranca la API REST |
+| `node server/create-admin.js` | Script interactivo para dar de alta un administrador |
+
+## Estructura del proyecto
+
+```
+index.html            Entrada de Vite
+vite.config.js        Plugins de React y Tailwind
+src/
+  main.jsx            Monta React y carga los estilos
+  App.jsx             Rutas: /login, /inicio, /programas, /programas/:clave
+  components/         AppLayout (menú lateral), ThemeToggle, LogoutButton
+  pages/              LoginPage, Dashboard, SelectorPrograma, ListaAlumnos
+  index.css           Tokens del diseño + clases neumórficas
+  styles/night-mode.css   Modo oscuro (clase `dark` en <html>)
+server/
+  index.js            API Express (rutas /api/...)
+  database.js         Conexión SQLite (archivo ./posgrados, relativo al CWD)
+  schema.sql          Esquema de la base de datos
+  create-admin.js     Alta de administradores con hash scrypt
+insertar-documentos.sql   Seed: estados de los 8 documentos por alumno
+insertar-proyectos.js     Seed: anteproyectos/tesis por matrícula
+posgrados             Base de datos SQLite local (ignorada por git)
+```
+
+> El backend resuelve la BD respecto al directorio de trabajo, así que
+> `node server/index.js` debe ejecutarse desde la raíz del proyecto.
+
+## Base de datos
+
+1. Crear el esquema (si no existe la BD):
+
+   ```bash
+   sqlite3 posgrados < server/schema.sql
+   ```
+
+2. Cargar los seeds (opcionales, sólo para reconstruir datos de demostración):
+
+   ```bash
+   sqlite3 posgrados < insertar-documentos.sql
+   node insertar-proyectos.js
+   ```
+
+3. Dar de alta un administrador para poder iniciar sesión:
+
+   ```bash
+   node server/create-admin.js
+   ```
+
+La autenticación compara `scrypt(password, salt)` contra el
+`password_hash` guardado en la tabla `administrador`.
+
+## API
+
+| Método | Ruta | Descripción |
+| --- | --- | --- |
+| `GET` | `/api/test` | Prueba de conexión y tablas de la BD |
+| `GET` | `/api/estadisticas` | Total de alumnos, doctorado y maestría |
+| `GET` | `/api/programas` | Programas con su total de alumnos |
+| `GET` | `/api/programas/:clave/alumnos` | Alumnos de un programa y su estado general |
+| `GET` | `/api/alumnos/:id/expediente` | Datos del alumno, su proyecto y sus documentos |
+| `PATCH` | `/api/alumnos/:alumnoId/documentos/:clave` | Cambia un documento a `Entregado`/`Pendiente` |
+| `POST` | `/api/login` | Autentica usuario y contraseña |
+
+## Notas
+
+- `pnpm build` genera `dist/` (ignorado por git); se regenera cuando haga falta.
+- El interruptor claro/oscuro y el botón de cerrar sesión aparecen en la barra
+  lateral del panel principal (`/inicio`).

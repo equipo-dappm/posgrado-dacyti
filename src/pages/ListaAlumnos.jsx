@@ -133,6 +133,15 @@ function TarjetaEstudiante({ estudiante }) {
       cargarExpediente()
     }
   }
+  // --- Estado general mostrado en la tarjeta --------------------------------
+  // Con el expediente ya cargado se recalcula con `completo` (que se actualiza
+  // en cada cambio de documento); si no, se conserva el valor del backend.
+  const estadoVisible = expediente
+    ? completo
+      ? 'Completo'
+      : 'Incompleto'
+    : estudiante.estadoGeneral
+
   // --- Render: fila visible (resumen) + área expandible (expediente) --------
   return (
     <div className="neumorphic-elevated rounded-xl bg-[#e0e5ec] overflow-hidden transition-all duration-300 border border-outline-variant/5">
@@ -167,12 +176,12 @@ function TarjetaEstudiante({ estudiante }) {
 
             <span
               className={`px-3 py-1 rounded-full text-label-sm font-label-sm font-semibold ${
-                estudiante.estadoGeneral === 'Completo'
+                estadoVisible === 'Completo'
                   ? 'pill-green'
                   : 'pill-grey'
               }`}
             >
-              {estudiante.estadoGeneral}
+              {estadoVisible}
             </span>
           </div>
         <button
