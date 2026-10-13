@@ -53,11 +53,10 @@ index.html            Entrada de Vite
 vite.config.js        Plugins de React y Tailwind
 src/
   main.jsx            Monta React y carga los estilos
-  App.jsx             Rutas: /login, /inicio, /programas, /programas/:clave
-  components/         AppLayout (menú lateral), ThemeToggle, LogoutButton
-  pages/              LoginPage, Dashboard, SelectorPrograma, ListaAlumnos
-  index.css           Tokens del diseño + clases neumórficas
-  styles/night-mode.css   Modo oscuro (clase `dark` en <html>)
+  App.jsx             Rutas: /login, /programas, /programas/:clave, /nuevo-alumno
+  components/         AppLayout (menú lateral), LogoutButton
+  pages/              LoginPage, SelectorPrograma, ListaAlumnos, NuevoAlumno
+  index.css           Tokens UJAT (colores + tipografía) y componentes
 server/
   index.js            API Express (rutas /api/...)
   database.js         Conexión SQLite (archivo ./posgrados, relativo al CWD)
@@ -110,5 +109,8 @@ La autenticación compara `scrypt(password, salt)` contra el
 ## Notas
 
 - `pnpm build` genera `dist/` (ignorado por git); se regenera cuando haga falta.
-- El interruptor claro/oscuro y el botón de cerrar sesión aparecen en la barra
-  lateral del panel principal (`/inicio`).
+- El botón de cerrar sesión aparece al pie de la barra lateral.
+- El inicio del sistema es `/programas` (estadísticas, búsqueda global y
+  tarjetas de programa).
+- Identidad visual UJAT: tres verdes institucionales y tipografía Caecilia (con
+  respaldo Roboto Slab) definidos en `src/index.css`.

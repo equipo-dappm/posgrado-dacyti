@@ -1,27 +1,26 @@
 // ============================================================================
 // COMPONENTE: APLICACIÓN LAYOUT
 // ============================================================================
-// Estructura base de las páginas internas: barra lateral de navegación
-// (neumórfica) a la izquierda y el contenido (children) al centro.
+// Estructura base de las páginas internas: barra lateral de navegación con la
+// identidad UJAT (Verde institucional) a la izquierda y el contenido
+// (children) al centro.
 // ============================================================================
 
 import { useLocation, useNavigate } from 'react-router-dom'
 import LogoutButton from './LogoutButton.jsx'
-import ThemeToggle from './ThemeToggle.jsx'
 
 // --- Ítems del menú lateral ------------------------------------------------
-// "Seguimientos" y "Reportes" son marcadores de posición (sin ruta aún).
+// "Reportes" es un marcador de posición (sin ruta aún).
 const NAV_ITEMS = [
-  { label: 'Alumnos', to: '/inicio' },
   { label: 'Programas', to: '/programas' },
-  { label: 'Seguimientos' },
+  { label: 'Nuevo alumno', to: '/nuevo-alumno' },
   { label: 'Reportes' },
 ]
 
 // Indica si un ítem del menú corresponde a la ruta actual.
 function isActive(item, pathname) {
-  if (item.to === '/inicio') return pathname === '/inicio'
   if (item.to === '/programas') return pathname === '/programas' || pathname.startsWith('/programas/')
+  if (item.to === '/nuevo-alumno') return pathname === '/nuevo-alumno'
   return false
 }
 
@@ -30,19 +29,27 @@ export default function AppLayout({ children }) {
   const { pathname } = useLocation()
 
   return (
-    <div className="bg-[#e0e5ec] text-on-background min-h-screen flex font-body-md transition-colors duration-300">
-      {/* Barra lateral */}
-      <aside className="w-[220px] flex-shrink-0 my-4 ml-4 p-4 neumorphic-elevated rounded-xl flex flex-col gap-[10px]">
-        <div className="font-semibold text-[15px] px-2 pb-5 text-on-background">Posgrado DACYTI</div>
-        <div className="flex flex-col gap-[10px]">
+    <div className="bg-background text-on-background min-h-screen flex font-body-md">
+      {/* Barra lateral: Verde institucional 1 (color predominante) */}
+      <aside className="w-[240px] flex-shrink-0 bg-ujat-verde-1 text-white flex flex-col">
+        <div className="px-6 py-5">
+          <div className="text-lg font-bold leading-tight">Posgrado DACYTI</div>
+          <div className="text-[11px] uppercase tracking-[0.15em] text-white/70 mt-1">
+            UJAT
+          </div>
+        </div>
+        {/* Franja de los tres verdes institucionales */}
+        <div className="ujat-stripe" />
+
+        <nav className="flex flex-col gap-1 p-4 flex-1">
           {NAV_ITEMS.map((item) =>
             item.to ? (
               <button
                 key={item.label}
-                className={`px-[16px] py-3 text-left text-sm cursor-pointer transition-colors ${
+                className={`w-full text-left px-4 py-3 text-sm rounded-lg border-l-4 transition-colors ${
                   isActive(item, pathname)
-                    ? 'text-primary font-semibold'
-                    : 'text-on-surface-variant hover:text-primary'
+                    ? 'bg-white/15 border-ujat-verde-3 text-white font-semibold'
+                    : 'border-transparent text-white/80 hover:bg-white/10 hover:text-white'
                 }`}
                 type="button"
                 onClick={() => navigate(item.to)}
@@ -50,20 +57,22 @@ export default function AppLayout({ children }) {
                 {item.label}
               </button>
             ) : (
-              <div key={item.label} className="px-[16px] py-3 text-left text-sm text-on-surface-variant">
+              <div
+                key={item.label}
+                className="px-4 py-3 text-left text-sm rounded-lg border-l-4 border-transparent text-white/45 cursor-default"
+              >
                 {item.label}
               </div>
-            ),
+            )
           )}
+        </nav>
+
+        {/* Cierre de sesión */}
+        <div className="p-4">
+          <LogoutButton />
         </div>
-        {/* Controles de tema/cierre de sesión solo en el dashboard */}
-        {pathname === '/inicio' && (
-          <div className="mt-auto flex flex-col items-start gap-3 pt-6">
-            <ThemeToggle />
-            <LogoutButton />
-          </div>
-        )}
       </aside>
+
       {/* Contenido de la página */}
       <main className="flex-1 min-w-0 px-8 lg:px-10 py-8">{children}</main>
     </div>

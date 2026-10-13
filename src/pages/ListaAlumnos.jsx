@@ -144,7 +144,7 @@ function TarjetaEstudiante({ estudiante }) {
 
   // --- Render: fila visible (resumen) + área expandible (expediente) --------
   return (
-    <div className="neumorphic-elevated rounded-xl bg-[#e0e5ec] overflow-hidden transition-all duration-300 border border-outline-variant/5">
+    <div className="card rounded-xl overflow-hidden border border-outline-variant/40">
       {/* Fila visible: matrícula, nombre, semestre, estado general */}
       <div
         className="p-card-padding flex flex-col md:flex-row justify-between items-center gap-4 cursor-pointer hover:bg-surface-container-low transition-colors"
@@ -158,7 +158,7 @@ function TarjetaEstudiante({ estudiante }) {
           <div className="md:col-span-2">
             <p className="text-label-sm font-label-sm font-semibold text-on-surface-variant mb-1">Nombre Completo</p>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full neumorphic-elevated flex items-center justify-center bg-[#e0e5ec] text-primary font-bold text-sm">
+              <div className="w-8 h-8 rounded-full bg-ujat-verde-1-soft flex items-center justify-center text-ujat-verde-1 font-bold text-sm">
                 {estudiante.iniciales}
               </div>
               <p className="text-body-md font-body-md font-medium text-on-surface">{estudiante.nombre}</p>
@@ -185,7 +185,7 @@ function TarjetaEstudiante({ estudiante }) {
             </span>
           </div>
         <button
-          className="w-10 h-10 rounded-full neumorphic-elevated flex items-center justify-center text-primary bg-[#e0e5ec] shrink-0"
+          className="w-10 h-10 rounded-full bg-ujat-verde-1 text-white flex items-center justify-center shrink-0 hover:bg-ujat-verde-2 transition-colors"
           type="button"
           aria-label="Expandir/contraer detalle"
         >
@@ -202,8 +202,9 @@ function TarjetaEstudiante({ estudiante }) {
           expanded ? 'expanded' : ''
         }`}
       >
-        <div className="p-card-padding">
-                    {cargando ? (
+        <div className="min-h-0">
+          <div className="p-card-padding">
+            {cargando ? (
             <p className="text-body-md text-on-surface-variant italic text-center py-4">
               Cargando información...
             </p>
@@ -215,8 +216,8 @@ function TarjetaEstudiante({ estudiante }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Left Column: Tesis & Formatos */}
               <div className="flex flex-col gap-6">
-                <div className="neumorphic-sunken p-4 rounded-lg bg-[#e0e5ec]">
-                  <h4 className="text-label-md font-label-md text-on-surface-variant font-bold mb-2 flex items-center gap-2">
+                <div className="bg-ujat-verde-1-soft p-4 rounded-lg border border-outline-variant/40">
+                  <h4 className="text-label-md font-label-md text-ujat-verde-1 font-bold mb-2 flex items-center gap-2">
                     <span className="material-symbols-outlined text-sm">
                       menu_book
                     </span>
@@ -278,7 +279,7 @@ function TarjetaEstudiante({ estudiante }) {
                     .map((documento) => (
                       <div
                         key={documento.clave}
-                        className="neumorphic-elevated p-3 rounded-lg bg-[#e0e5ec] flex flex-col items-center justify-center text-center"
+                        className="card p-3 rounded-lg flex flex-col items-center justify-center text-center"
                       >
                         <span className="text-label-sm font-label-sm font-semibold text-on-surface-variant mb-1">
                           {documento.clave}
@@ -301,6 +302,7 @@ function TarjetaEstudiante({ estudiante }) {
               </div>
             </div>
           ) : null}
+          </div>
         </div>
       </div>
     </div>
@@ -316,6 +318,7 @@ export default function ListaAlumnos() {
   const nombrePrograma = NOMBRE_PROGRAMA[claveNormalizada] ?? claveNormalizada
     const [estudiantes, setEstudiantes] = useState([])
   const [error, setError] = useState('')
+  const [busqueda, setBusqueda] = useState('')
 
   // --- Carga los alumnos del programa desde el backend ----------------------
   useEffect(() => {
@@ -345,12 +348,22 @@ export default function ListaAlumnos() {
       })
   }, [claveNormalizada])
 
+  // --- Filtro local por matrícula o nombre dentro del programa -------------
+  const termino = busqueda.trim().toLowerCase()
+  const estudiantesFiltrados = termino
+    ? estudiantes.filter(
+        (estudiante) =>
+          estudiante.matricula.toLowerCase().includes(termino) ||
+          estudiante.nombre.toLowerCase().includes(termino),
+      )
+    : estudiantes
+
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto flex flex-col gap-element-gap">
         {/* Encabezado con la clave y nombre del programa */}
         <header className="mb-8">
-          <h1 className="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">
+          <h1 className="text-headline-md font-headline-md font-bold text-ujat-verde-1">
             {claveNormalizada} - {nombrePrograma}
           </h1>
           <p className="text-label-sm font-label-sm font-semibold text-on-surface-variant">
@@ -361,27 +374,33 @@ export default function ListaAlumnos() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           {/* Neumorphic Search Bar */}
           <div className="relative w-full md:w-96">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">
+            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-ujat-verde-1">
               search
             </span>
             <input
-              className="w-full h-12 pl-12 pr-4 rounded-xl bg-[#e0e5ec] border-none neumorphic-sunken text-body-md font-body-md text-on-surface focus:outline-none focus:ring-1 focus:ring-primary/50 transition-shadow"
+              className="input-ujat w-full h-12 pl-12 pr-4 rounded-xl text-body-md font-body-md"
               placeholder="Buscar por matrícula o nombre..."
-              type="text"
+              type="search"
+              value={busqueda}
+              onChange={(event) => setBusqueda(event.target.value)}
             />
           </div>
           {/* Primary Action Button */}
-          <button className="neumorphic-elevated neumorphic-button bg-primary-container text-on-primary h-12 px-6 rounded-xl flex items-center gap-2 text-label-md font-label-md font-bold transition-all relative overflow-hidden group" type="button">
-            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <button className="btn-primary h-12 px-6 rounded-xl flex items-center gap-2 text-label-md font-label-md font-bold" type="button">
             <span className="material-symbols-outlined">add</span>
             Nuevo Alumno
           </button>
         </div>
         {/* Main List: Expandable Student Cards */}
         <div className="flex flex-col gap-element-gap">
-          {estudiantes.map((estudiante) => (
+          {estudiantesFiltrados.map((estudiante) => (
             <TarjetaEstudiante key={estudiante.matricula} estudiante={estudiante} />
           ))}
+          {estudiantes.length > 0 && estudiantesFiltrados.length === 0 && (
+            <p className="text-sm text-on-surface-variant italic text-center py-6">
+              Sin resultados para «{busqueda.trim()}»
+            </p>
+          )}
         </div>
       </div>
     </AppLayout>

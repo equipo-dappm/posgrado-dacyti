@@ -1,32 +1,106 @@
 @import "tailwindcss";
 
-/* Modo oscuro por clase (como en el HTML original: tailwind.config darkMode: "class") */
-@custom-variant dark (&:where(.dark, .dark *));
-
 /* ============================================================
-   Tokens del sistema de diseño "Academic Soft UI"
-   Fuente: stitch-export/academic_soft_ui/DESIGN.md + config
-   tailwind que viajaba en los code.html
+   IDENTIDAD VISUAL UJAT (Universidad Juárez Autónoma de Tabasco)
+   Guía de uso institucional: tres verdes, tipografía Caecilia.
    ============================================================ */
-@theme {
-  /* Colores */
-  --color-surface-container-low: #eff4fb;
-  --color-surface-container: #e9eef5;
-  --color-on-surface: #171c21;
-  --color-on-surface-variant: #404751;
-  --color-outline: #707882;
-  --color-outline-variant: #bfc7d3;
-  --color-primary: #00629f;
-  --color-on-primary: #ffffff;
-  --color-primary-container: #4facfe;
-  --color-error: #ba1a1a;
-  --color-error-container: #ffdad6;
-  --color-primary-fixed-dim: #9bcbff;
-  --color-background: #f6f9ff;
-  --color-on-background: #171c21;
-  --color-surface-variant: #dee3ea;
 
-  /* Radios (los que usan las pantallas reales de Stitch) */
+/* ------------------------------------------------------------
+   Fuente institucional: Caecilia (comercial, slab serif).
+   Cae a Roboto Slab (Google Fonts) mientras no se instalen los
+   archivos con licencia. Si la institución provee los .woff2,
+   reemplaza las rutas `local(...)` por `url("/fonts/...")`.
+   ------------------------------------------------------------ */
+@font-face {
+  font-family: "Caecilia";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local("Caecilia Roman"), local("Caecilia"), local("CaeciliaLTStd-Roman");
+}
+@font-face {
+  font-family: "Caecilia";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local("Caecilia Italic"), local("CaeciliaLTStd-Italic");
+}
+@font-face {
+  font-family: "Caecilia";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Caecilia Bold"), local("CaeciliaLTStd-Bold");
+}
+@font-face {
+  font-family: "Caecilia";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Caecilia Bold Italic"), local("CaeciliaLTStd-BoldItalic");
+}
+@font-face {
+  font-family: "Caecilia";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: local("Caecilia Black"), local("CaeciliaLTStd-Black");
+}
+
+/* ------------------------------------------------------------
+   Tokens institucionales en :root
+   ------------------------------------------------------------ */
+:root {
+  --ujat-verde-1: #1c8443; /* Principal   · Pantone 356 C */
+  --ujat-verde-2: #41ad49; /* Acompañamiento · Pantone 362 C */
+  --ujat-verde-3: #8dc642; /* Acompañamiento · Pantone 376 C */
+
+  /* Tintes claros derivados (solo para fondos/acentos) */
+  --ujat-verde-1-soft: #e7f3e9;
+  --ujat-verde-2-soft: #eaf7eb;
+  --ujat-verde-3-soft: #f0f8e4;
+  --ujat-tinta: #1a1a1a;
+  --ujat-blanco: #ffffff;
+
+  /* Tipografía institucional con respaldo slab serif */
+  --ujat-font: "Caecilia", "Rockwell", "Roboto Slab", Georgia, serif;
+}
+
+/* ------------------------------------------------------------
+   Tema de Tailwind: colores y tipografía institucionales
+   ------------------------------------------------------------ */
+@theme {
+  /* Verdes institucionales */
+  --color-ujat-verde-1: #1c8443;
+  --color-ujat-verde-2: #41ad49;
+  --color-ujat-verde-3: #8dc642;
+  --color-ujat-verde-1-soft: #e7f3e9;
+  --color-ujat-verde-2-soft: #eaf7eb;
+  --color-ujat-verde-3-soft: #f0f8e4;
+
+  /* Superficies (texto negro sobre blanco) */
+  --color-background: #ffffff;
+  --color-on-background: #1a1a1a;
+  --color-surface: #ffffff;
+  --color-surface-container-low: #f6faf6;
+  --color-surface-container: #eef5ee;
+  --color-surface-variant: #e3ece3;
+  --color-on-surface: #1a1a1a;
+  --color-on-surface-variant: #4a4a4a;
+  --color-outline: #5f6b5f;
+  --color-outline-variant: #cfd8cf;
+
+  /* Rol primario = Verde 1 */
+  --color-primary: #1c8443;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1c8443;
+  --color-primary-fixed-dim: #8dc642;
+
+  /* Estados */
+  --color-error: #b3261e;
+  --color-error-container: #f9dedc;
+
+  /* Radios */
   --radius-DEFAULT: 0.25rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
@@ -38,13 +112,14 @@
   --spacing-container-margin: 32px;
   --spacing-element-gap: 16px;
 
-  /* Tipografía */
-  --font-display-lg: "Inter", sans-serif;
-  --font-headline-md: "Inter", sans-serif;
-  --font-body-lg: "Inter", sans-serif;
-  --font-body-md: "Inter", sans-serif;
-  --font-label-md: "Inter", sans-serif;
-  --font-label-sm: "Inter", sans-serif;
+  /* Tipografía: Caecilia (con respaldo slab serif) */
+  --font-sans: "Caecilia", "Rockwell", "Roboto Slab", Georgia, serif;
+  --font-display-lg: "Caecilia", "Rockwell", "Roboto Slab", Georgia, serif;
+  --font-headline-md: "Caecilia", "Rockwell", "Roboto Slab", Georgia, serif;
+  --font-body-lg: "Caecilia", "Rockwell", "Roboto Slab", Georgia, serif;
+  --font-body-md: "Caecilia", "Rockwell", "Roboto Slab", Georgia, serif;
+  --font-label-md: "Caecilia", "Rockwell", "Roboto Slab", Georgia, serif;
+  --font-label-sm: "Caecilia", "Rockwell", "Roboto Slab", Georgia, serif;
 
   --text-display-lg: 48px;
   --text-display-lg--line-height: 56px;
@@ -72,69 +147,138 @@
   --text-label-sm--letter-spacing: 0.05em;
 }
 
+/* ------------------------------------------------------------
+   Base
+   ------------------------------------------------------------ */
+@layer base {
+  html {
+    font-family: var(--ujat-font);
+  }
+
+  body {
+    background-color: var(--ujat-blanco);
+    color: var(--ujat-tinta);
+    font-family: var(--ujat-font);
+  }
+
+  h1,
+  h2 {
+    font-weight: 700;
+  }
+
+  h3,
+  h4 {
+    font-weight: 700;
+  }
+
+  ::selection {
+    background-color: var(--ujat-verde-3);
+    color: var(--ujat-tinta);
+  }
+}
+
 /* ============================================================
-   Clases neumórficas compartidas (extraídas de los code.html)
+   Componentes institucionales
    ============================================================ */
-.neumorphic-elevated {
-  box-shadow: 9px 9px 16px rgba(163, 177, 198, 0.6), -9px -9px 16px rgba(255, 255, 255, 0.5);
+
+/* Franja de los tres verdes (encabezados / secciones) */
+.ujat-stripe {
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--ujat-verde-1) 0 33.33%,
+    var(--ujat-verde-2) 33.33% 66.66%,
+    var(--ujat-verde-3) 66.66% 100%
+  );
 }
 
-.neumorphic-sunken {
-  box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+/* Tarjeta base: fondo blanco, borde y sombra institucional */
+.card {
+  background-color: var(--ujat-blanco);
+  border: 1px solid var(--color-outline-variant);
+  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.05), 0 6px 16px rgba(28, 132, 67, 0.06);
 }
 
-.neumorphic-elevated-hover {
-  transition: all 0.3s ease;
+/* Botón primario: Verde 1 con texto blanco */
+.btn-primary {
+  background-color: var(--ujat-verde-1);
+  color: var(--ujat-blanco);
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
-.neumorphic-elevated-hover:hover {
-  box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+.btn-primary:hover {
+  background-color: var(--ujat-verde-2);
+}
+.btn-primary:active {
   transform: scale(0.98);
 }
 
-.neumorphic-button:active {
-  box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+/* Botón de acento: Verde 3 con texto oscuro */
+.btn-accent {
+  background-color: var(--ujat-verde-3);
+  color: var(--ujat-tinta);
+  transition: background-color 0.2s ease;
+}
+.btn-accent:hover {
+  background-color: var(--ujat-verde-2);
+  color: var(--ujat-blanco);
 }
 
-.btn-active:active {
-  box-shadow: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+/* Botón fantasma: blanco con borde y texto Verde 1 */
+.btn-ghost {
+  background-color: var(--ujat-blanco);
+  border: 1px solid var(--ujat-verde-1);
+  color: var(--ujat-verde-1);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.btn-ghost:hover {
+  background-color: var(--ujat-verde-1-soft);
 }
 
-.primary-glow {
-  box-shadow: 9px 9px 16px rgba(163, 177, 198, 0.6), -9px -9px 16px rgba(255, 255, 255, 0.5), inset 2px 2px 4px rgba(255, 255, 255, 0.4);
+/* Campo de formulario institucional */
+.input-ujat {
+  background-color: var(--ujat-blanco);
+  border: 1px solid var(--color-outline-variant);
+  color: var(--ujat-tinta);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.input-ujat::placeholder {
+  color: var(--color-outline);
+}
+.input-ujat:focus {
+  outline: none;
+  border-color: var(--ujat-verde-1);
+  box-shadow: 0 0 0 3px rgba(141, 198, 66, 0.35);
 }
 
 /* ============================================================
    Badges / pills de estado (formato, evaluaciones, programa)
+   Verde 3 no alcanza contraste AA como texto: se usa como fondo
+   con texto oscuro. Verde 1 sí funciona como fondo con blanco.
    ============================================================ */
 .pill-green {
-  background: linear-gradient(135deg, #e6f4ea, #ceebd5);
-  color: #137333;
-  box-shadow: 2px 2px 5px rgba(163, 177, 198, 0.4), -2px -2px 5px rgba(255, 255, 255, 0.7);
+  background: var(--ujat-verde-1);
+  color: var(--ujat-blanco);
 }
 
 .pill-amber {
-  background: linear-gradient(135deg, #fef7e0, #fce8b2);
-  color: #b06000;
-  box-shadow: 2px 2px 5px rgba(163, 177, 198, 0.4), -2px -2px 5px rgba(255, 255, 255, 0.7);
+  background: #fef3c7;
+  color: #8a5300;
 }
 
 .pill-grey {
-  background: linear-gradient(135deg, #f1f3f4, #e8eaed);
-  color: #5f6368;
-  box-shadow: inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff;
+  background: #eef1ee;
+  color: #4a4a4a;
 }
 
-/* Badges de programa del dashboard (mockup_neumorfismo.html) */
+/* Etiquetas de programa */
 .pill-doc {
-  background: #e4e9f9;
-  color: #5b7fdb;
-  box-shadow: 2px 2px 5px rgba(163, 177, 198, 0.4), -2px -2px 5px rgba(255, 255, 255, 0.7);
+  background: var(--ujat-verde-1-soft);
+  color: var(--ujat-verde-1);
 }
 
 .pill-mae {
-  background: #eee7fb;
-  color: #7a56c9;
-  box-shadow: 2px 2px 5px rgba(163, 177, 198, 0.4), -2px -2px 5px rgba(255, 255, 255, 0.7);
+  background: var(--ujat-verde-3-soft);
+  color: #4a6b13;
 }
 
 /* ============================================================
@@ -150,4 +294,5 @@
 }
 .expandable-content > div {
   overflow: hidden;
+  min-height: 0;
 }

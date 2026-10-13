@@ -1,19 +1,21 @@
 // ============================================================================
 // RUTAS DE LA APLICACIÓN
 // ============================================================================
-// Define el routing de React Router. "/" redirige a la página de login.
+// Define el routing de React Router. "/" redirige a la página de login y el
+// inicio del sistema es la selección de programas.
 //
 //   /                  -> redirige a /login
 //   /login             -> LoginPage (autenticación)
-//   /inicio            -> Dashboard (panel principal)
-//   /programas         -> SelectorPrograma (elegir programa)
+//   /inicio            -> redirige a /programas (inicio del sistema)
+//   /programas         -> SelectorPrograma (inicio)
 //   /programas/:clave  -> ListaAlumnos (alumnos de un programa)
+//   /nuevo-alumno      -> NuevoAlumno (vista previa de alta)
 // ============================================================================
 
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import Dashboard from './pages/Dashboard.jsx'
 import ListaAlumnos from './pages/ListaAlumnos.jsx'
 import LoginPage from './pages/LoginPage.jsx'
+import NuevoAlumno from './pages/NuevoAlumno.jsx'
 import SelectorPrograma from './pages/SelectorPrograma.jsx'
 
 export default function App() {
@@ -22,9 +24,10 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/inicio" element={<Dashboard />} />
+        <Route path="/inicio" element={<Navigate to="/programas" replace />} />
         <Route path="/programas" element={<SelectorPrograma />} />
         <Route path="/programas/:clave" element={<ListaAlumnos />} />
+        <Route path="/nuevo-alumno" element={<NuevoAlumno />} />
       </Routes>
     </BrowserRouter>
   )

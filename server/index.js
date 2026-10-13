@@ -101,6 +101,83 @@ app.get('/api/programas/:clave/alumnos', (req, res) => {
     })
   }
 })
+// === BÚSQUEDA GLOBAL DE ALUMNOS =============================================
+// Busca alumnos de CUALQUIER programa por matrícula o por nombre completo
+// (nombre + apellidos). Devuelve el programa al que pertenecen y su estado
+// general. Requiere al menos 2 caracteres.
+app.get('/api/alumnos/buscar', (req, res) => {
+  try {
+    const termino = (req.query.q ?? '').toString().trim()
+
+    if (termino.length < 2) {
+      return res.json([])
+    }
+
+    const prefijo = `${termino}%`
+    const contiene = `%${termino}%`
+
+    // La matrícula se busca por PREFIJO (los primeros números), ignorando la
+    // letra "H" para que al teclear solo dígitos aparezcan las matrículas
+    // próximas. Los aciertos por prefijo se ordenan antes y por matrícula.
+    const alumnos = db.prepare(`
+      SELECT
+        a.id,
+        a.matricula,
+        a.nombre,
+        a.apellido_paterno,
+        a.apellido_materno,
+        p.clave AS programa_clave,
+        p.nombre AS programa_nombre,
+        (
+          SELECT COUNT(*)
+          FROM alumno_documento ad
+          INNER JOIN estados_documento ed
+            ON ad.estado_id = ed.id
+          WHERE ad.alumno_id = a.id
+            AND ed.nombre = 'Entregado'
+        ) AS entregados
+      FROM alumnos a
+      INNER JOIN programas p
+        ON a.programa_id = p.id
+      WHERE a.matricula LIKE @prefijo
+         OR REPLACE(a.matricula, 'H', '') LIKE @prefijo
+         OR (a.nombre || ' ' || a.apellido_paterno || ' ' || COALESCE(a.apellido_materno, '')) LIKE @contiene
+      ORDER BY
+        CASE
+          WHEN a.matricula LIKE @prefijo
+            OR REPLACE(a.matricula, 'H', '') LIKE @prefijo
+          THEN 0
+          ELSE 1
+        END,
+        CASE
+          WHEN a.matricula LIKE @prefijo
+            OR REPLACE(a.matricula, 'H', '') LIKE @prefijo
+          THEN a.matricula
+        END,
+        a.apellido_paterno, a.apellido_materno, a.nombre
+      LIMIT 50
+    `).all({ prefijo, contiene })
+
+    res.json(
+      alumnos.map((alumno) => ({
+        id: alumno.id,
+        matricula: alumno.matricula,
+        nombre: [alumno.nombre, alumno.apellido_paterno, alumno.apellido_materno]
+          .filter(Boolean)
+          .join(' '),
+        programa: alumno.programa_clave,
+        programaNombre: alumno.programa_nombre,
+        estado: alumno.entregados === 8 ? 'Completo' : 'Incompleto',
+      }))
+    )
+  } catch (error) {
+    console.error('Error al buscar alumnos:', error)
+
+    res.status(500).json({
+      error: 'Error al buscar alumnos',
+    })
+  }
+})
 // === EXPEDIENTE DE UN ALUMNO ================================================
 // Devuelve datos del alumno, su proyecto (tesis/anteproyecto) y sus documentos.
 app.get('/api/alumnos/:id/expediente', (req, res) => {
