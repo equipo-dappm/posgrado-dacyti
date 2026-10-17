@@ -31,7 +31,8 @@ export default function AppLayout({ children }) {
   return (
     <div className="bg-background text-on-background min-h-screen flex font-body-md">
       {/* Barra lateral: Verde institucional 1 (color predominante) */}
-      <aside className="w-[240px] flex-shrink-0 bg-ujat-verde-1 text-white flex flex-col">
+      {/* Se mantiene visible (sticky) mientras el contenido de la página scrollea de forma independiente */}
+      <aside className="sticky top-0 z-10 h-[100dvh] w-[240px] flex-shrink-0 bg-ujat-verde-1 text-white flex flex-col">
         <div className="px-6 py-5">
           <div className="text-lg font-bold leading-tight">Posgrado DACYTI</div>
           <div className="text-[11px] uppercase tracking-[0.15em] text-white/70 mt-1">
