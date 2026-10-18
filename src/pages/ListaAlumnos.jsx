@@ -317,7 +317,7 @@ export default function ListaAlumnos() {
   const claveNormalizada = (clave ?? '').toUpperCase()
   const nombrePrograma = NOMBRE_PROGRAMA[claveNormalizada] ?? claveNormalizada
     const [estudiantes, setEstudiantes] = useState([])
-  const [error, setError] = useState('')
+  const [, setError] = useState('')
   const [busqueda, setBusqueda] = useState('')
 
   // --- Carga los alumnos del programa desde el backend ----------------------
@@ -385,11 +385,6 @@ export default function ListaAlumnos() {
               onChange={(event) => setBusqueda(event.target.value)}
             />
           </div>
-          {/* Primary Action Button */}
-          <button className="btn-primary h-12 px-6 rounded-xl flex items-center gap-2 text-label-md font-label-md font-bold" type="button">
-            <span className="material-symbols-outlined">add</span>
-            Nuevo Alumno
-          </button>
         </div>
         {/* Main List: Expandable Student Cards */}
         <div className="flex flex-col gap-element-gap">
